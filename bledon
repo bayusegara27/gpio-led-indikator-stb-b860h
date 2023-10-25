@@ -2,8 +2,8 @@
 
 # B860H v1/v2 GPIO Wrapper
 # by Lutfa Ilham
-# v1.0
-# GPIO Founder REYRE
+# v4.0
+# Edited by Nakumi
 
 if [ "$(id -u)" != "0" ]; then
   echo "This script must be run as root" 1>&2
@@ -15,19 +15,18 @@ GPIO="/sys/class/gpio"
 function dual_general() {
   pin_on="${2}"
   pin_off="${3}"
-  # initialize gpio
   echo "${pin_on}" > "${GPIO}/export"
   echo "${pin_off}" > "${GPIO}/export"
   echo out > "${GPIO}/gpio${pin_on}/direction"
   echo out > "${GPIO}/gpio${pin_off}/direction"
   case "${1}" in
     "on")
-      echo 0 > "${GPIO}/gpio${pin_off}/value"
-      echo 1 > "${GPIO}/gpio${pin_on}/value"
+      echo 1 > "${GPIO}/gpio${pin_off}/value"
+      echo 0 > "${GPIO}/gpio${pin_on}/value"
       ;;
     "off")
-      echo 0 > "${GPIO}/gpio${pin_on}/value"
-      echo 1 > "${GPIO}/gpio${pin_off}/value"
+      echo 1 > "${GPIO}/gpio${pin_on}/value"
+      echo 0 > "${GPIO}/gpio${pin_off}/value"
       ;;
     "warn")
       echo 1 > "${GPIO}/gpio${pin_on}/value"
@@ -41,8 +40,8 @@ function dual_general() {
 }
 
 function lan() {
-  pin_on="476"
-  pin_off="474"
+  pin_on="476" # Hijau
+  pin_off="474" # Merah
   dual_general "${1}" "${pin_on}" "${pin_off}"
 }
 
@@ -63,4 +62,3 @@ case "${1}" in
     usage
     ;;
 esac
-
