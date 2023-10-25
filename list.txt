@@ -1,0 +1,6 @@
+B860H v1/v2
+415 led lan1
+416 led lan2
+474 led red
+476 led green
+505 usb
