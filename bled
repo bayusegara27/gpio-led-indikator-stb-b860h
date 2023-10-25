@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Internet Indicator for B860H v1/v2 Wrapper
+# by Nakumi
+# v2.1
+
+if [ "$(id -u)" != "0" ]; then
+  echo "This script must be run as root" 1>&2
+  exit 1
+fi
+
+SERVICE_NAME="Internet Indicator"
+
+function loop() {
+  while true; do
+    # Dapatkan traffic download (Rx) dari eth0
+    rx_traffic=$(cat /sys/class/net/eth0/statistics/rx_bytes)
+
+    # Dapatkan traffic upload (Tx) dari eth0
+    tx_traffic=$(cat /sys/class/net/eth0/statistics/tx_bytes)
+
+    # Hitung traffic Rx dan Tx sebelum tidur
+    sleep 0.1 # Ganti tidur menjadi 0.1 detik (100 milidetik)
+    new_rx_traffic=$(cat /sys/class/net/eth0/statistics/rx_bytes)
+    new_tx_traffic=$(cat /sys/class/net/eth0/statistics/tx_bytes)
+
+    # Hitung selisih traffic untuk menentukan aktivitas Rx dan Tx
+    rx_diff=$((new_rx_traffic - rx_traffic))
+    tx_diff=$((new_tx_traffic - tx_traffic))
+
+    bledon -lan dis
+
+    # Jika ada aktivitas download (Rx), nyalakan lampu hijau
+    if [ "$rx_diff" -gt 0 ]; then
+      bledon -lan on
+    fi
+
+    # Jika ada aktivitas upload (Tx), nyalakan lampu merah
+    if [ "$tx_diff" -gt 0 ]; then
+      bledon -lan off
+    fi
+
+    sleep 0.1 # Ganti tidur menjadi 0.1 detik (100 milidetik)
+  done
+}
+
+function start() {
+  echo -e "Starting ${SERVICE_NAME} service ..."
+  # Mulai skrip loop
+  screen -AmdS internet-indicator "${0}" -l -l
+}
+
+function stop() {
+  echo -e "Stopping ${SERVICE_NAME} service ..."
+  # Hentikan skrip loop
+  kill $(screen -list | grep internet-indicator | awk -F '[.]' {'print $1'})
+}
+
+function usage() {
+  cat <<EOF
+Usage:
+  -r  Run ${SERVICE_NAME} service
+  -s  Stop ${SERVICE_NAME} service
+EOF
+}
+
+case "${1}" in
+  -l)
+    loop
+    ;;
+  -r)
+    start
+    ;;
+  -s)
+    stop
+    ;;
+  *)
+    usage
+    ;;
+esac
