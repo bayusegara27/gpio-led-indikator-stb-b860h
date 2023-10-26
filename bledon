@@ -27,12 +27,12 @@ function dual_general() {
       echo 1 > "${GPIO}/gpio${pin_red}/value"
       ;;
     "warn")
-      echo 1 > "${GPIO}/gpio${pin_on}/value"
       echo 1 > "${GPIO}/gpio${pin_green}/value"
+      echo 1 > "${GPIO}/gpio${pin_red}/value"
       ;;
     "dis")
-      echo 0 > "${GPIO}/gpio${pin_on}/value"
       echo 0 > "${GPIO}/gpio${pin_green}/value"
+      echo 0 > "${GPIO}/gpio${pin_red}/value"
       ;;
   esac
 }
