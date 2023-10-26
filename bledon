@@ -38,8 +38,8 @@ function dual_general() {
 }
 
 function lan() {
-  pin_red="476" # Hijau
-  pin_green="474" # Merah
+  pin_red="476"
+  pin_green="474"
   dual_general "${1}" "${pin_red}" "${pin_green}"
 }
 
