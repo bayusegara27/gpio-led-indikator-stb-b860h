@@ -2,7 +2,7 @@
 
 # Internet Indicator for B860H v1/v2
 # by Lutfa Ilham
-# v3.0
+# v6.0
 # Edited by Nakumi
 
 if [ "$(id -u)" != "0" ]; then
@@ -22,10 +22,10 @@ function loop() {
     rx_diff=0
     tx_diff=0
 
-    bledon -lan dis
-
     while true; do
-      sleep 1
+      sleep 0.3
+      bledon -lan dis
+      
       new_rx_traffic=$(cat /sys/class/net/eth0/statistics/rx_bytes)
       new_tx_traffic=$(cat /sys/class/net/eth0/statistics/tx_bytes)
 
@@ -33,15 +33,11 @@ function loop() {
       tx_diff=$((new_tx_traffic - tx_traffic))
 
       if [ "$rx_diff" -gt $LED_ON_THRESHOLD ]; then
-        bledon -lan on
-      else
-        bledon -lan dis
+        bledon -lan red  # Mengaktifkan LED merah jika Rx melebihi ambang batas
       fi
 
       if [ "$tx_diff" -gt $LED_ON_THRESHOLD ]; then
-        bledon -lan off
-      else
-        bledon -lan dis
+        bledon -lan green  # Mengaktifkan LED hijau jika Tx melebihi ambang batas
       fi
 
       rx_traffic=$new_rx_traffic

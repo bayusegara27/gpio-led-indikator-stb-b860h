@@ -2,7 +2,7 @@
 
 # B860H v1/v2 GPIO Wrapper
 # by Lutfa Ilham
-# v4.0
+# v6.0
 # Edited by Nakumi
 
 if [ "$(id -u)" != "0" ]; then
@@ -13,43 +13,41 @@ fi
 GPIO="/sys/class/gpio"
 
 function dual_general() {
-  pin_on="${2}"
-  pin_off="${3}"
-  echo "${pin_on}" > "${GPIO}/export"
-  echo "${pin_off}" > "${GPIO}/export"
-  echo out > "${GPIO}/gpio${pin_on}/direction"
-  echo out > "${GPIO}/gpio${pin_off}/direction"
+  pin_green="${2}"
+  pin_red="${3}"
+  echo "${pin_green}" > "${GPIO}/export"
+  echo "${pin_red}" > "${GPIO}/export"
+  echo out > "${GPIO}/gpio${pin_green}/direction"
+  echo out > "${GPIO}/gpio${pin_red}/direction"
   case "${1}" in
-    "on")
-      echo 1 > "${GPIO}/gpio${pin_off}/value"
-      echo 0 > "${GPIO}/gpio${pin_on}/value"
+    "green")
+      echo 1 > "${GPIO}/gpio${pin_green}/value"
       ;;
-    "off")
-      echo 1 > "${GPIO}/gpio${pin_on}/value"
-      echo 0 > "${GPIO}/gpio${pin_off}/value"
+    "red")
+      echo 1 > "${GPIO}/gpio${pin_red}/value"
       ;;
     "warn")
       echo 1 > "${GPIO}/gpio${pin_on}/value"
-      echo 1 > "${GPIO}/gpio${pin_off}/value"
+      echo 1 > "${GPIO}/gpio${pin_green}/value"
       ;;
     "dis")
       echo 0 > "${GPIO}/gpio${pin_on}/value"
-      echo 0 > "${GPIO}/gpio${pin_off}/value"
+      echo 0 > "${GPIO}/gpio${pin_green}/value"
       ;;
   esac
 }
 
 function lan() {
-  pin_on="476" # Hijau
-  pin_off="474" # Merah
-  dual_general "${1}" "${pin_on}" "${pin_off}"
+  pin_red="476" # Hijau
+  pin_green="474" # Merah
+  dual_general "${1}" "${pin_red}" "${pin_green}"
 }
 
 function usage() {
   cat <<EOF
 Usage:
-  -power  [on, off, warn, dis]
-  -lan    [on, off, warn, dis]
+  -power  [green, red, warn, dis]
+  -lan    [green, red, warn, dis]
   -usb    [reset]
 EOF
 }
